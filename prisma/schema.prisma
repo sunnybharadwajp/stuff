@@ -1,0 +1,124 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Task {
+  id         Int        @id @default(autoincrement())
+  title      String?
+  notes      String?
+  tags       TaskTag[]
+  when       DateTime?
+  deadline   DateTime?
+  done       Boolean    @default(false)
+  doneWhen   DateTime?
+  checklist  Checklist?
+  deletedAt  DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  project    Project?   @relation(fields: [projectId], references: [id])
+  projectId  Int?
+  area       Area?      @relation(fields: [areaId], references: [id])
+  areaId     Int?
+  heading    Heading?   @relation(fields: [headingId], references: [id])
+  headingId  Int?
+  reminder   Reminder?
+  reminderId Int?
+  someday    Boolean    @default(false)
+  anytime    Boolean    @default(false)
+  order      Int        @default(0)
+}
+
+model Area {
+  id        Int       @id @default(autoincrement())
+  title     String
+  projects  Project[]
+  tasks     Task[]
+  tags      Tag[]
+  headings  Heading[]
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Project {
+  id          Int       @id @default(autoincrement())
+  title       String
+  areaId      Int?
+  tasks       Task[]
+  tags        Tag[]
+  headings    Heading[]
+  progress    Int       @default(0)
+  deletedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  area        Area?     @relation(fields: [areaId], references: [id])
+}
+
+model Tag {
+  id       Int       @id @default(autoincrement())
+  name     String
+  tasks    TaskTag[]
+  areas    Area[]
+  projects Project[]
+}
+
+model TaskTag {
+  taskId Int
+  tagId  Int
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, tagId])
+}
+
+model Checklist {
+  id        Int       @id @default(autoincrement())
+  taskId    Int       @unique
+  task      Task      @relation(fields: [taskId], references: [id])
+  subtasks  Subtask[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Subtask {
+  id          Int       @id @default(autoincrement())
+  title       String
+  done        Boolean   @default(false)
+  checklistId Int
+  checklist   Checklist @relation(fields: [checklistId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Heading {
+  id        Int      @id @default(autoincrement())
+  title     String
+  tasks     Task[]
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId Int?
+  area      Area?    @relation(fields: [areaId], references: [id])
+  areaId    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Reminder {
+  id         Int      @id @default(autoincrement())
+  taskId     Int      @unique
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  reminderAt DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
