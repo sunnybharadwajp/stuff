@@ -55,9 +55,14 @@
 	}
 	const debouncedOnTaskContentChange = debounce(onTaskContentChange, 250);
 
-	function handleEnter(event) {
+	function handleEditModeCommands(event) {
 		event.stopPropagation();
 		if (event.key === 'Enter') {
+			taskState.set('minimised');
+			setEditingTaskId(null);
+		}
+
+		if (event.key === 'Escape') {
 			taskState.set('minimised');
 			setEditingTaskId(null);
 		}
@@ -79,17 +84,17 @@
 				body: JSON.stringify(currentTask)
 			});
 
-			const nextTaskId = await getAdjacentTaskId(currentId);
+			const nextTaskId = getAdjacentTaskId(currentId);
 
 			removeTask(currentId);
 			setSelectedTaskId(nextTaskId);
 		}
 
 		if (event.key === 'ArrowUp') {
-			const previousTaskId = await getPreviousTaskId(currentTask.id);
+			const previousTaskId = getPreviousTaskId(currentTask.id);
 			setSelectedTaskId(previousTaskId);
 		} else if (event.key === 'ArrowDown') {
-			const nextTaskId = await getNextTaskId(currentTask.id);
+			const nextTaskId = getNextTaskId(currentTask.id);
 			setSelectedTaskId(nextTaskId);
 		}
 
@@ -156,7 +161,7 @@
 				bind:this={editInputElement}
 				bind:value={currentTask.title}
 				on:input={debouncedOnTaskContentChange}
-				on:keydown={handleEnter}
+				on:keydown={handleEditModeCommands}
 			/>
 			<textarea
 				name="notes"
