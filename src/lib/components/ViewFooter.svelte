@@ -1,7 +1,7 @@
 <script>
 	import { Plus, CalendarDays, ArrowRight, Search, Trash2, Ellipsis } from 'lucide-svelte';
 	import { addToTasks } from '$lib/stores/tasks.js';
-	import { setEditingTask, setSelectedTask } from '$lib/stores/viewer_state.js';
+	import { setEditingTaskId, setSelectedTaskId } from '$lib/stores/viewer_state.js';
 
 	const addDefaultTask = async () => {
 		console.log('Add default task');
@@ -20,8 +20,8 @@
 
 		const data = await request.json();
 		addToTasks(data);
-		setSelectedTask(data);
-		setEditingTask(data);
+		setSelectedTaskId(data.id);
+		setEditingTaskId(data.id);
 	};
 </script>
 

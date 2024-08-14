@@ -3,7 +3,11 @@ import { json } from '@sveltejs/kit';
 
 // GET /api/tasks - List all tasks
 export async function GET() {
-	const tasks = await prisma.task.findMany();
+	const tasks = await prisma.task.findMany({
+		where: {
+			deletedAt: null
+		}
+	});
 
 	return json(tasks);
 }

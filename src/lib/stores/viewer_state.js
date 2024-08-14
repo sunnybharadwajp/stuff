@@ -3,7 +3,9 @@ import { writable } from 'svelte/store';
 export const viewerState = writable({
 	tasks: [],
 	selectedTask: null,
-	editingTask: null
+	editingTask: null,
+	selectedTaskId: null,
+	editingTaskId: null
 });
 
 export const setViewerTasks = (data) => {
@@ -23,6 +25,20 @@ export const setSelectedTask = (task) => {
 export const setEditingTask = (task) => {
 	viewerState.update((state) => {
 		state.editingTask = task;
+		return state;
+	});
+};
+
+export const setSelectedTaskId = (id) => {
+	viewerState.update((state) => {
+		state.selectedTaskId = id;
+		return state;
+	});
+};
+
+export const setEditingTaskId = (id) => {
+	viewerState.update((state) => {
+		state.editingTaskId = id;
 		return state;
 	});
 };

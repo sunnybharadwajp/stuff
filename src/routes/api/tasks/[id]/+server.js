@@ -1,3 +1,4 @@
+import { json } from '@sveltejs/kit';
 import prisma from '$lib/prisma';
 
 // GET /api/tasks/:id - Get a specific task
@@ -6,15 +7,15 @@ export async function GET({ params }) {
 		where: { id: parseInt(params.id) }
 	});
 	if (task) {
-		return {
+		return json({
 			status: 200,
 			body: task
-		};
+		});
 	} else {
-		return {
+		return json({
 			status: 404,
 			body: { error: 'Task not found' }
-		};
+		});
 	}
 }
 
@@ -25,10 +26,10 @@ export async function PUT({ params, request }) {
 		where: { id: parseInt(params.id) },
 		data
 	});
-	return {
+	return json({
 		status: 200,
 		body: updatedTask
-	};
+	});
 }
 
 // DELETE /api/tasks/:id - Delete a specific task
@@ -36,7 +37,7 @@ export async function DELETE({ params }) {
 	await prisma.task.delete({
 		where: { id: parseInt(params.id) }
 	});
-	return {
+	return json({
 		status: 204
-	};
+	});
 }

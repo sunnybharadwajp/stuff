@@ -1,80 +1,169 @@
 <script>
 	import { CalendarDays, ListCheck, Flag, Tag } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
-	import { viewerState, setSelectedTask, setEditingTask } from '$lib/stores/viewer_state.js';
+	import { removeTask } from '$lib/stores/tasks.js';
+	import { viewerState, setSelectedTaskId, setEditingTaskId } from '$lib/stores/viewer_state.js';
+	import {
+		updateTask,
+		getAdjacentTaskId,
+		getNextTaskId,
+		getPreviousTaskId
+	} from '$lib/stores/tasks.js';
+
+	import { debounce } from '$lib/utils';
 
 	export let currentTask;
 	let editInputElement;
+	let taskElement;
+	let editElement;
 
 	const taskState = writable('minimised');
 	const taskSelected = writable(false);
 
 	function handleClick(event) {
-		setSelectedTask(currentTask);
-		if (currentTask !== $viewerState.editingTask) {
-			setEditingTask(null);
+		setSelectedTaskId(currentTask.id);
+		if (currentTask.id !== $viewerState.editingTaskId) {
+			setEditingTaskId(null);
 		}
 	}
 
 	function handleDoubleClick(event) {
-		if (currentTask !== $viewerState.editingTask && currentTask === $viewerState.selectedTask) {
-			console.log('double clicked');
-			setEditingTask(currentTask);
+		if (
+			currentTask.id !== $viewerState.editingTaskId &&
+			currentTask.id === $viewerState.selectedTaskId
+		) {
+			setEditingTaskId(currentTask.id);
 			taskState.set('editing');
+			setTimeout(() => {
+				editInputElement.focus();
+			}, 0);
 		}
 	}
 
-	$: if ($taskState === 'editing' && editInputElement) {
-		setTimeout(() => {
-			editInputElement.focus();
-		}, 0);
+	async function onTaskContentChange() {
+		console.log('task content changed');
+
+		const request = await fetch(`/api/tasks/${currentTask.id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(currentTask)
+		});
+		const data = await request.json();
+		updateTask(data);
+	}
+	const debouncedOnTaskContentChange = debounce(onTaskContentChange, 250);
+
+	function handleEnter(event) {
+		event.stopPropagation();
+		if (event.key === 'Enter') {
+			taskState.set('minimised');
+			setEditingTaskId(null);
+		}
 	}
 
-	$: if (currentTask !== $viewerState.editingTask) {
-		$taskState = 'minimised';
+	async function handleTaskCommands(event) {
+		console.log('key event fired');
+
+		if (event.key === 'Backspace' || event.key === 'Delete') {
+			console.log('Deleting task...');
+			let currentId = currentTask.id;
+			console.log('Current task ID:', currentId);
+			currentTask.deletedAt = new Date().toISOString();
+			await fetch(`/api/tasks/${currentId}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(currentTask)
+			});
+
+			const nextTaskId = await getAdjacentTaskId(currentId);
+
+			removeTask(currentId);
+			setSelectedTaskId(nextTaskId);
+		}
+
+		if (event.key === 'ArrowUp') {
+			const previousTaskId = await getPreviousTaskId(currentTask.id);
+			setSelectedTaskId(previousTaskId);
+		} else if (event.key === 'ArrowDown') {
+			const nextTaskId = await getNextTaskId(currentTask.id);
+			setSelectedTaskId(nextTaskId);
+		}
+
+		if (event.key === 'Enter' && $taskState === 'minimised') {
+			taskState.set('editing');
+			setEditingTaskId(currentTask.id);
+			setTimeout(() => {
+				editInputElement.focus();
+			}, 0);
+		}
 	}
 
-	$: if (currentTask === $viewerState.editingTask) {
+	$: if (currentTask.id !== $viewerState.editingTaskId) {
+		taskState.set('minimised');
+	} else {
 		taskState.set('editing');
 	}
 
-	$: if (currentTask === $viewerState.selectedTask) {
+	$: if (currentTask.id === $viewerState.selectedTaskId) {
 		taskSelected.set(true);
+		if ($taskState === 'minimised') {
+			setTimeout(() => {
+				taskElement.focus();
+			}, 0);
+		}
 	} else {
 		taskSelected.set(false);
 	}
 </script>
 
-<button
+<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-static-element-interactions
+ Cannot be a button as it requires nested elements -->
+<div
 	class="task"
 	class:edit-mode={$taskState === 'editing'}
 	class:selected={$taskSelected === true}
+	bind:this={taskElement}
 	on:click={handleClick}
 	on:dblclick={handleDoubleClick}
+	on:keydown={$taskState !== 'editing' ? handleTaskCommands : null}
+	tabindex="0"
+	role="button"
 >
 	<div class="checkbox-wrapper">
 		<input type="checkbox" />
 	</div>
 
-	<div class="task-content text-left">
+	<div class="task-content text-left truncate">
 		{#if $taskState === 'minimised' || $taskState === 'selected'}
 			<div class="minimised-mode">
 				{#if currentTask.title}
-					<span>{currentTask.title}</span>
+					<span class="w-full">{currentTask.title}</span>
 				{:else}
 					<span class="opacity-40">New To-Do</span>
 				{/if}
 			</div>
 		{/if}
 
-		<div class="edit-mode" class:hidden={$taskState !== 'editing'}>
+		<div bind:this={editElement} class="edit-mode" class:hidden={$taskState !== 'editing'}>
 			<input
-				bind:this={editInputElement}
+				name="title"
 				type="text"
-				value={currentTask.title || ''}
 				placeholder="New To-Do"
+				bind:this={editInputElement}
+				bind:value={currentTask.title}
+				on:input={debouncedOnTaskContentChange}
+				on:keydown={handleEnter}
 			/>
-			<textarea name="" id="" placeholder="Notes"></textarea>
+			<textarea
+				name="notes"
+				placeholder="Notes"
+				bind:value={currentTask.notes}
+				on:input={debouncedOnTaskContentChange}
+			></textarea>
 			<div class="tags"></div>
 			<div class="controls flex gap-3 justify-end px-3 py-1">
 				<button class="control-button">
@@ -92,4 +181,4 @@
 			</div>
 		</div>
 	</div>
-</button>
+</div>
