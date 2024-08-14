@@ -34,6 +34,10 @@
 		$taskState = 'minimised';
 	}
 
+	$: if (currentTask === $viewerState.editingTask) {
+		taskState.set('editing');
+	}
+
 	$: if (currentTask === $viewerState.selectedTask) {
 		taskSelected.set(true);
 	} else {
