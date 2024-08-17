@@ -27,18 +27,18 @@
 
 <div class="page-footer">
 	<div class="button-group">
-		<button on:click={addDefaultTask}>
+		<a class="button" on:click={addDefaultTask}>
 			<Plus size={16} />
-		</button>
-		<button class="disabled">
+		</a>
+		<a class="disabled button">
 			<CalendarDays size={16} />
-		</button>
-		<button class="disabled">
+		</a>
+		<a class="disabled button">
 			<ArrowRight size={16} />
-		</button>
-		<button>
+		</a>
+		<a class="button view-footer-button" href="/search">
 			<Search size={16} />
-		</button>
+		</a>
 		<div class="focus hidden">
 			<button>
 				<ArrowRight size={16} />
@@ -71,25 +71,25 @@
 		justify-content: center;
 	}
 
-	.page-footer button {
+	.page-footer a.button {
 		padding: 0.2rem 2rem;
 		border-radius: 6px;
 		border: 1px solid #f5f6f8;
 	}
 
-	.page-footer button.disabled svg {
+	.page-footer a.button.disabled svg {
 		stroke: #c6c6c6;
 	}
 
-	.page-footer button:hover {
+	.page-footer a.button:hover {
 		border: 1px solid #c6c6c6;
 	}
 
-	.page-footer button:not(.disabled):hover svg {
+	.page-footer a.button:not(.disabled):hover svg {
 		stroke: #767676;
 	}
 
-	.page-footer button.disabled:hover {
+	.page-footer a.button.disabled:hover {
 		border: 1px solid #f5f6f8;
 	}
 

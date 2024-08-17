@@ -1,14 +1,16 @@
 <script>
-	import { Inbox, Trash2 } from 'lucide-svelte';
+	import { Inbox, Trash2, BookCheck } from 'lucide-svelte';
+	import FilterButton from './FilterButton.svelte';
 </script>
 
 <div class="sidebar">
-	<a href="/inbox" class="sidebar-button filter common w-full flex">
-		<span class="sidebar-filter-icon"><Inbox size={16} /></span>
-		<span class="sidebar-filter-name">Inbox</span>
-		<div class="flex gap-[0.1rem]">
-			<div class="count due"><span>8</span></div>
-			<div class="count"><span>8</span></div>
-		</div>
-	</a>
+	<FilterButton link="/inbox" filterIcon={Inbox} title="Inbox" countDue={8} countTotal={8} />
+	<FilterButton link="/trash" filterIcon={Trash2} title="Trash" countDue={0} countTotal={0} />
+	<FilterButton
+		link="/logbook"
+		filterIcon={BookCheck}
+		title="Logbook"
+		countDue={0}
+		countTotal={0}
+	/>
 </div>
