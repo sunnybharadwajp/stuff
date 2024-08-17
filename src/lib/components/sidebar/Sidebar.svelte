@@ -1,6 +1,7 @@
 <script>
 	import { Inbox, Trash2, BookCheck } from 'lucide-svelte';
 	import FilterButton from './FilterButton.svelte';
+	import { initFetchCounter } from '$lib/stores/utilStore';
 </script>
 
 <div class="sidebar">
@@ -13,4 +14,6 @@
 		countDue={0}
 		countTotal={0}
 	/>
+
+	<p>{$initFetchCounter}</p>
 </div>

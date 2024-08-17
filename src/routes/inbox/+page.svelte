@@ -3,6 +3,17 @@
 	import { tasks } from '$lib/stores/tasks.js';
 	import { setSelectedTaskId, setEditingTaskId } from '$lib/stores/viewer_state.js';
 	import Task from '$lib/components/Task.svelte';
+	import { onMount } from 'svelte';
+
+	import { writable } from 'svelte/store';
+	import { allTasks } from '$lib/stores/taskStore';
+
+	let inboxTasks = writable([]);
+
+	$: {
+		console.log('running inbox fill');
+		$inboxTasks = $allTasks.filter((task) => task.deletedAt === null);
+	}
 
 	function handleBackgroundClick(event) {
 		if (event.target === event.currentTarget) {
@@ -20,7 +31,7 @@
 	</div>
 
 	<div class="tasks-list">
-		{#each $tasks as currentTask}
+		{#each $inboxTasks as currentTask}
 			<div class="task-item">
 				<Task {currentTask} />
 			</div>

@@ -1,7 +1,7 @@
 <script>
 	import { CalendarDays, ListCheck, Flag, Tag } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
-	import { removeTask } from '$lib/stores/tasks.js';
+	import { removeFromTasks } from '$lib/stores/taskStore';
 	import { viewerState, setSelectedTaskId, setEditingTaskId } from '$lib/stores/viewer_state.js';
 	import {
 		updateTask,
@@ -80,8 +80,8 @@
 			});
 
 			const nextTaskId = await getAdjacentTaskId(currentId);
-
-			removeTask(currentId);
+			removeFromTasks(currentId);
+			// removeTask(currentId);
 			setSelectedTaskId(nextTaskId);
 		}
 
