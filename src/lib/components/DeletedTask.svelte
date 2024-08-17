@@ -9,7 +9,7 @@
 		<input type="checkbox" />
 	</div>
 
-	<div class="deleted-at text-xs text-blue-400 tracking-tight font-semibold">
+	<div class="done-when text-xs text-blue-400 tracking-tight font-semibold">
 		{#if currentTask.doneWhen}
 			<span>{formatDate(currentTask.doneWhen)}</span>
 		{/if}

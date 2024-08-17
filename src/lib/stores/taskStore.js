@@ -12,11 +12,19 @@ function addToTasks(task) {
 }
 
 const inboxTasks = derived(allTasks, (allTasksValue) => {
-	return allTasksValue.filter((task) => task.deletedAt === null);
+	return allTasksValue.filter(
+		(task) => task.deletedAt === null && task.done === false
+	);
 });
 
 const trashTasks = derived(allTasks, (allTasksValue) => {
 	return allTasksValue.filter((task) => task.deletedAt !== null);
+});
+
+const logbookTasks = derived(allTasks, (allTasksValue) => {
+	return allTasksValue.filter(
+		(task) => task.done === true && task.deletedAt === null
+	);
 });
 
 function updateCurrentTask(task) {
@@ -39,6 +47,7 @@ export {
 	editingTaskId,
 	inboxTasks,
 	trashTasks,
+	logbookTasks,
 	addToTasks,
 	updateCurrentTask,
 	removeFromTasks

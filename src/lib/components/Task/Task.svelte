@@ -11,7 +11,12 @@
 		updateCurrentTask
 	} from '$lib/stores/taskStore';
 
-	import { debounce, getPreviousTaskId, getNextTaskId } from '$lib/utils';
+	import {
+		debounce,
+		getPreviousTaskId,
+		getNextTaskId,
+		removeFromTasks
+	} from '$lib/utils';
 
 	export let currentTask;
 
@@ -21,6 +26,15 @@
 
 	let titleInputElem;
 	let taskElement;
+
+	const toggleTaskDone = async () => {
+		if (currentTask.done) {
+			setTimeout(() => {
+				updateTaskRecord();
+				removeFromTasks(currentTask.id);
+			}, 1200);
+		}
+	};
 
 	async function handleTaskCommands(event) {
 		if (event.key === 'Backspace' || event.key === 'Delete') {
@@ -150,7 +164,7 @@
 		<input
 			type="checkbox"
 			bind:checked={currentTask.done}
-			on:change={debouncedUpdate}
+			on:change={toggleTaskDone}
 		/>
 	</div>
 	<div class="content-wrapper">

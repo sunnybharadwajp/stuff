@@ -1,5 +1,23 @@
 <script>
 	import { BookCheck } from 'lucide-svelte';
+	import { setContext } from 'svelte';
+
+	import {
+		logbookTasks,
+		selectedTaskId,
+		editingTaskId
+	} from '$lib/stores/taskStore';
+
+	import Task from '$lib/components/Task/Task.svelte';
+
+	setContext('currentTasksList', logbookTasks);
+
+	function handleBackgroundClick(event) {
+		if (event.target === event.currentTarget) {
+			$selectedTaskId = null;
+			$editingTaskId = null;
+		}
+	}
 </script>
 
 <div class="filter-view">
@@ -8,5 +26,9 @@
 		<h1>Logbook</h1>
 	</div>
 
-	<!-- Page Content -->
+	<div class="tasks-list">
+		{#each $logbookTasks as currentTask}
+			<Task {currentTask} />
+		{/each}
+	</div>
 </div>
