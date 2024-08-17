@@ -2,7 +2,11 @@
 	import { CalendarDays, ListCheck, Flag, Tag } from 'lucide-svelte';
 	import { writable } from 'svelte/store';
 	import { removeFromTasks } from '$lib/stores/taskStore';
-	import { viewerState, setSelectedTaskId, setEditingTaskId } from '$lib/stores/viewer_state.js';
+	import {
+		viewerState,
+		setSelectedTaskId,
+		setEditingTaskId
+	} from '$lib/stores/viewer_state.js';
 	import {
 		updateTask,
 		getAdjacentTaskId,
@@ -148,7 +152,11 @@
 			</div>
 		{/if}
 
-		<div bind:this={editElement} class="edit-mode" class:hidden={$taskState !== 'editing'}>
+		<div
+			bind:this={editElement}
+			class="edit-mode"
+			class:hidden={$taskState !== 'editing'}
+		>
 			<input
 				name="title"
 				type="text"

@@ -1,12 +1,23 @@
 <script>
 	import { Inbox, Trash2, BookCheck } from 'lucide-svelte';
 	import FilterButton from './FilterButton.svelte';
-	import { initFetchCounter } from '$lib/stores/utilStore';
 </script>
 
 <div class="sidebar">
-	<FilterButton link="/inbox" filterIcon={Inbox} title="Inbox" countDue={8} countTotal={8} />
-	<FilterButton link="/trash" filterIcon={Trash2} title="Trash" countDue={0} countTotal={0} />
+	<FilterButton
+		link="/inbox"
+		filterIcon={Inbox}
+		title="Inbox"
+		countDue={8}
+		countTotal={8}
+	/>
+	<FilterButton
+		link="/trash"
+		filterIcon={Trash2}
+		title="Trash"
+		countDue={0}
+		countTotal={0}
+	/>
 	<FilterButton
 		link="/logbook"
 		filterIcon={BookCheck}
@@ -14,6 +25,4 @@
 		countDue={0}
 		countTotal={0}
 	/>
-
-	<p>{$initFetchCounter}</p>
 </div>

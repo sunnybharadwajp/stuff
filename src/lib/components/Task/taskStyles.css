@@ -1,0 +1,62 @@
+.task-component {
+	display: flex;
+	gap: 0.5rem;
+	align-items: flex-start;
+	transition: all 0.15s ease-in-out;
+	padding: 0.07rem 0.4rem;
+	border-radius: 0.25rem;
+	outline: none;
+
+	&:focus-visible {
+		outline: none;
+	}
+
+	&.minimised-mode {
+		cursor: pointer;
+
+		&.:not(.selected):hover {
+			background-color: #f0f0f0;
+		}
+	}
+
+	&.selected {
+		background-color: #bfdbfe;
+		&:hover {
+			background-color: #bfdbfe;
+		}
+	}
+
+	&.editing-mode {
+		background: #f5f6f8;
+		padding: 0.4rem 0.4rem;
+		margin: 1.4rem 0;
+		box-shadow:
+			0 1px 3px rgba(0, 0, 0, 0.12),
+			0 1px 2px rgba(0, 0, 0, 0.24);
+	}
+
+	.checkbox-wrapper {
+		flex-shrink: 0;
+	}
+
+	.content-wrapper {
+		flex-grow: 1;
+	}
+}
+
+.editing {
+	input,
+	textarea {
+		display: block;
+		width: 100%;
+		background: transparent;
+
+		&:focus-visible {
+			outline: none;
+		}
+	}
+
+	textarea {
+		resize: none;
+	}
+}
