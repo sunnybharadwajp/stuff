@@ -26,3 +26,17 @@ export async function POST({ request }) {
 		});
 	}
 }
+
+export async function DELETE({}) {
+	const tasks = await prisma.task.deleteMany({
+		where: {
+			deletedAt: {
+				not: null
+			}
+		}
+	});
+
+	const remainingTasks = await prisma.task.findMany();
+
+	return json(remainingTasks);
+}
