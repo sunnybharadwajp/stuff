@@ -6,11 +6,11 @@
 	import { initFetchCounter } from '$lib/stores/utilStore';
 	import { allTasks } from '$lib/stores/taskStore';
 
-	$: console.log($initFetchCounter);
-	$: console.log($allTasks);
+	// $: console.log($initFetchCounter);
+	// $: console.log($allTasks);
 
 	async function getAllTasks() {
-		console.log('get all tasks is run');
+		// console.log('get all tasks is run');
 		const res = await fetch('/api/tasks');
 		const data = await res.json();
 		$initFetchCounter += 1;

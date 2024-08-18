@@ -12,6 +12,7 @@
 	} from '$lib/stores/taskStore';
 
 	import {
+		formatDate,
 		debounce,
 		getPreviousTaskId,
 		getNextTaskId,
@@ -28,10 +29,17 @@
 	let taskElement;
 
 	const toggleTaskDone = async () => {
+		$editingTaskId = null;
+		$taskState = 'minimised';
 		if (currentTask.done) {
+			currentTask.doneWhen = new Date().toISOString();
 			setTimeout(() => {
 				updateTaskRecord();
-				removeFromTasks(currentTask.id);
+			}, 1200);
+		} else {
+			currentTask.doneWhen = null;
+			setTimeout(() => {
+				updateTaskRecord();
 			}, 1200);
 		}
 	};
@@ -97,8 +105,8 @@
 			},
 			body: JSON.stringify(currentTask)
 		});
-		const data = request.json();
-		console.log(data);
+		const data = await request.json();
+
 		updateCurrentTask(data);
 	};
 
@@ -167,6 +175,7 @@
 			on:change={toggleTaskDone}
 		/>
 	</div>
+
 	<div class="content-wrapper">
 		<div
 			class="minimised select-none"
@@ -177,6 +186,14 @@
 				<span class="w-full">{currentTask.title}</span>
 			{:else}
 				<span class="opacity-40">New To-Do</span>
+			{/if}
+
+			{#if currentTask.doneWhen}
+				<div
+					class="done-when text-xs text-blue-400 tracking-tight font-semibold"
+				>
+					<span>{formatDate(currentTask.doneWhen)}</span>
+				</div>
 			{/if}
 		</div>
 		<div class="editing" class:hidden={$taskState === 'minimised'}>
