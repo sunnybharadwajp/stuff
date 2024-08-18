@@ -1,8 +1,13 @@
 <script>
+	import { page } from '$app/stores';
 	export let filterIcon, link, title, countDue, countTotal;
 </script>
 
-<a href={link} class="sidebar-button filter common w-full flex">
+<a
+	href={link}
+	class="sidebar-button filter common w-full flex"
+	class:active={$page.url.pathname === link}
+>
 	<span class="sidebar-filter-icon">
 		<svelte:component this={filterIcon} size={20} />
 	</span>

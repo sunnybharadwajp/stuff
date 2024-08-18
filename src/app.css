@@ -20,6 +20,10 @@ html {
 	font-size: 16px;
 }
 
+.unselectable {
+	user-select: none;
+}
+
 .app-container {
 	display: grid;
 	height: 100vh;

@@ -169,7 +169,7 @@
 	</div>
 	<div class="content-wrapper">
 		<div
-			class="minimised"
+			class="minimised select-none"
 			on:click={handleClick}
 			class:hidden={$taskState === 'editing'}
 		>
